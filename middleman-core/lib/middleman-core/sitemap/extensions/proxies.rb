@@ -19,12 +19,9 @@ module Middleman
           super
 
           @proxy_configs = Set.new
-          @post_config = false
         end
 
         def after_configuration
-          @post_config = true
-
           ::Middleman::CoreExtensions::Collections::StepContext.add_to_context(:proxy, &method(:create_anonymous_proxy))
         end
 
@@ -39,10 +36,7 @@ module Middleman
         # @return [void]
         Contract String, String, Maybe[Hash] => Any
         def create_proxy(path, target, opts={})
-          options = opts.dup
-          @app.ignore(target) if options.delete(:ignore)
-
-          @proxy_configs << create_anonymous_proxy(path, target, options)
+          @proxy_configs << create_anonymous_proxy(path, target, opts.dup)
           @app.sitemap.rebuild_resource_list!(:added_proxy)
         end
 
@@ -67,20 +61,27 @@ module Middleman
         # @return Array<Middleman::Sitemap::Resource>
         Contract ResourceList => ResourceList
         def manipulate_resource_list(resources)
-          resources + @proxy_configs.map { |c| c.to_resource(@app) }
+          @proxy_configs.reduce(resources) do |sum, c|
+            c.execute_descriptor(@app, sum)
+          end
         end
       end
 
       ProxyDescriptor = Struct.new(:path, :target, :metadata) do
-        def to_resource(app)
-          ProxyResource.new(app.sitemap, path, target).tap do |p|
+        def execute_descriptor(app, resources)
+          r = ProxyResource.new(app.sitemap, path, target).tap do |p|
             md = metadata.dup
+
+            app.ignore(target) if md.delete(:ignore)
+
             p.add_metadata(
               locals: md.delete(:locals) || {},
               page: md.delete(:data) || {},
               options: md
             )
           end
+
+          resources + [r]
         end
       end
     end

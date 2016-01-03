@@ -3,12 +3,6 @@ require 'active_support/core_ext/hash/deep_merge'
 require 'monitor'
 require 'hamster'
 
-# Ignores
-Middleman::Extensions.register :sitemap_ignore, auto_activate: :before_configuration do
-  require 'middleman-core/sitemap/extensions/ignores'
-  Middleman::Sitemap::Extensions::Ignores
-end
-
 # Files on Disk
 Middleman::Extensions.register :sitemap_ondisk, auto_activate: :before_configuration do
   require 'middleman-core/sitemap/extensions/on_disk'
@@ -44,6 +38,13 @@ Middleman::Extensions.register :sitemap_move_files, auto_activate: :before_confi
   require 'middleman-core/sitemap/extensions/move_file'
   Middleman::Sitemap::Extensions::MoveFile
 end
+
+# Ignores
+Middleman::Extensions.register :sitemap_ignore, auto_activate: :before_configuration do
+  require 'middleman-core/sitemap/extensions/ignores'
+  Middleman::Sitemap::Extensions::Ignores
+end
+
 
 require 'middleman-core/contracts'
 
@@ -159,7 +160,7 @@ module Middleman
         end
       end
 
-      # Invalidate our cached view of resource that are not ingnored. If your extension
+      # Invalidate our cached view of resource that are not ignored. If your extension
       # adds ways to ignore files, you should call this to make sure #resources works right.
       def invalidate_resources_not_ignored_cache!
         @resources_not_ignored = nil

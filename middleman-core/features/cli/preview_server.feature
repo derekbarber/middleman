@@ -42,7 +42,7 @@ Feature: Run the preview server
     Inspect your site configuration at "http://
     """
 
-  @ruby-2.1
+  @wip
   Scenario: Start the server with defaults in verbose mode, when a local mdns server resolves the local hostname
     Given I start a mdns server for the local hostname
     When I run `middleman server --verbose` interactively
@@ -359,7 +359,6 @@ Feature: Run the preview server
     The Middleman preview server is bound to ":::65432", "0.0.0.0:65432"
     """
 
-  @ruby-2.1
   @wip
   Scenario: Start the server when port is blocked by other middleman instance
     Given `middleman server` is running in background
@@ -469,7 +468,7 @@ Feature: Run the preview server
     Inspect your site configuration at "http://www.example.com:4567/__middleman", "http://127.0.0.1:4567/__middleman"
     """
 
-    @ruby-2.1
+  @wip
   Scenario: Start the server with server name "host.local" and the link local name server is used to resolve the server name
 
     To make the mdns resolver resolve a name, it needs to end with ".local".
@@ -501,7 +500,7 @@ Feature: Run the preview server
     Inspect your site configuration at "http://host.local:4567/__middleman", "http://127.0.0.1:4567/__middleman"
     """
 
-    @ruby-2.1
+  @wip
   Scenario: Start the server with server name "host" and the link local name server is used to resolve the server name
 
     To make the mdns resolver resolve a name, it needs to end with ".local". If
